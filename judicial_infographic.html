@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Infographic: Idaho Judicial Threat Analysis</title>
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+    <!-- 
+        Palette Selection: "Brilliant Blues" (#003f5c, #2f4b7c, #665191, #a05195, #d45087, #f95d6a, #ff7c43, #ffa600)
+        Narrative Plan: 
+        1. Title and Hook.
+        2. High-level overview of threat distribution (Donut Chart).
+        3. Stark comparison of overall threat likelihood (Big Number).
+        4. Deeper dive into specific threat categories (Bar Charts).
+        5. Conclusion and call for vigilance.
+        Visualization Plan:
+        - D1 vs Rest of State Total Threats -> Goal: Compare Composition -> Donut Chart (Chart.js). Justification: Best for simple proportions. NO SVG.
+        - Overall Likelihood Multiplier -> Goal: Inform -> Big Number visualization (HTML/CSS). Justification: High impact for key stat. NO SVG.
+        - Specific Threat Category Comparisons -> Goal: Compare Categories -> Bar Charts (Chart.js). Justification: Clear comparison across 2 groups. NO SVG.
+        - NO MERMAID JS USED. NO SVG USED.
+        - ALL CSS IS NOW EMBEDDED TO ENSURE RELIABLE LOCAL/HOSTED RENDERING.
+    -->
+    <style>
+        /* Base styles from Tailwind's Preflight (reset) and common utilities */
+        *, ::before, ::after {
+            box-sizing: border-box;
+            border-width: 0;
+            border-style: solid;
+            border-color: #e5e7eb;
+        }
+        ::before, ::after {
+            --tw-content: '';
+        }
+        html {
+            line-height: 1.5;
+            -webkit-text-size-adjust: 100%;
+            font-family: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+        }
+        body {
+            margin: 0;
+            line-height: inherit;
+        }
+        h1, h2, h3, p {
+            margin: 0;
+        }
+        /* Custom font */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0f172a; /* slate-900 */
+            color: #e2e8f0; /* text-slate-200 */
+        }
+        /* Color Palette & Grayscale definitions */
+        .bg-slate-900 { background-color: #0f172a; }
+        .bg-slate-800 { background-color: #1e293b; }
+        .bg-slate-700 { background-color: #334155; }
+        .text-slate-200 { color: #e2e8f0; }
+        .text-slate-300 { color: #cbd5e1; }
+        .text-slate-400 { color: #94a3b8; }
+        .text-white { color: #ffffff; }
+
+        /* Brilliant Blues Palette */
+        .text-primary-dark-blue { color: #003f5c; }
+        .text-secondary-blue { color: #2f4b7c; }
+        .text-purple-blue { color: #665191; }
+        .text-soft-purple { color: #a05195; }
+        .text-deep-rose { color: #d45087; }
+        .text-vibrant-red-orange { color: #f95d6a; }
+        .text-bright-orange-yellow { color: #ff7c43; }
+        .text-golden-orange { color: #ffa600; }
+        .text-red-500 { color: #ef4444; } /* Fallback for red for specific visual impact */
+        .text-orange-400 { color: #fb923c; } /* Fallback for orange for specific visual impact */
+        .text-yellow-500 { color: #eab308; } /* Fallback for yellow for specific visual impact */
+        .text-blue-400 { color: #60a5fa; } /* Fallback for blue for specific visual impact */
+
+
+        /* Layout and Spacing */
+        .container {
+            width: 100%;
+            margin-right: auto;
+            margin-left: auto;
+            padding-left: 1rem;
+            padding-right: 1rem;
+        }
+        @media (min-width: 768px) {
+            .container {
+                padding-left: 2rem;
+                padding-right: 2rem;
+            }
+        }
+        @media (min-width: 1280px) {
+            .max-w-7xl {
+                max-width: 80rem;
+            }
+        }
+        .mx-auto { margin-left: auto; margin-right: auto; }
+        .my-1 { margin-top: 0.25rem; margin-bottom: 0.25rem; }
+        .mb-1 { margin-bottom: 0.25rem; }
+        .mb-2 { margin-bottom: 0.5rem; }
+        .mb-4 { margin-bottom: 1rem; }
+        .mb-6 { margin-bottom: 1.5rem; }
+        .mb-8 { margin-bottom: 2rem; }
+        .mb-12 { margin-bottom: 3rem; }
+        .mb-16 { margin-bottom: 4rem; }
+        .mb-20 { margin-bottom: 5rem; }
+        .mt-1 { margin-top: 0.25rem; }
+        .p-4 { padding: 1rem; }
+        .p-6 { padding: 1.5rem; }
+        .p-8 { padding: 2rem; }
+        .p-12 { padding: 3rem; }
+
+        /* Typography */
+        .text-center { text-align: center; }
+        .text-sm { font-size: 0.875rem; line-height: 1.25rem; }
+        .text-lg { font-size: 1.125rem; line-height: 1.75rem; }
+        .text-xl { font-size: 1.25rem; line-height: 1.75rem; }
+        .text-2xl { font-size: 1.5rem; line-height: 2rem; }
+        .text-3xl { font-size: 1.875rem; line-height: 2.25rem; }
+        .text-4xl { font-size: 2.25rem; line-height: 2.5rem; }
+        .text-5xl { font-size: 3rem; line-height: 1; }
+        .text-6xl { font-size: 3.75rem; line-height: 1; }
+        .font-bold { font-weight: 700; }
+        .font-black { font-weight: 900; }
+        .font-extrabold { font-weight: 800; } /* For highlight-stat specifically */
+
+        /* Flex & Grid Layout */
+        .flex { display: flex; }
+        .flex-col { flex-direction: column; }
+        .flex-grow { flex-grow: 1; }
+        .items-center { align-items: center; }
+        .grid { display: grid; }
+        .grid-cols-1 { grid-template-columns: repeat(1, minmax(0, 1fr)); }
+        .gap-4 { gap: 1rem; }
+        .gap-8 { gap: 2rem; }
+        @media (min-width: 768px) { /* md breakpoint */
+            .md\:grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .md\:p-8 { padding: 2rem; }
+            .md\:p-12 { padding: 3rem; }
+            .md\:text-xl { font-size: 1.25rem; line-height: 1.75rem; }
+            .md\:text-2xl { font-size: 1.5rem; line-height: 2rem; }
+            .md\:text-3xl { font-size: 1.875rem; line-height: 2.25rem; }
+            .md\:text-4xl { font-size: 2.25rem; line-height: 2.5rem; }
+            .md\:text-5xl { font-size: 3rem; line-height: 1; }
+            .md\:mb-16 { margin-bottom: 4rem; }
+            .md\:mb-20 { margin-bottom: 5rem; }
+        }
+        @media (min-width: 1024px) { /* lg breakpoint */
+            .lg\:grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+        }
+
+        /* Border & Shadow */
+        .rounded-lg { border-radius: 0.5rem; }
+        .shadow-2xl { box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); }
+        .border-t { border-top-width: 1px; }
+        .border-slate-700 { border-color: #334155; }
+
+        /* Specific element styling */
+        .highlight-stat {
+            font-weight: 900;
+            color: #ffa600; /* golden-orange from palette */
+            font-size: 5rem;
+            line-height: 1;
+        }
+        .highlight-stat-sm {
+            font-weight: 900;
+            color: #ff7c43; /* bright-orange-yellow from palette */
+        }
+        .max-w-3xl { max-width: 48rem; }
+        .block { display: block; }
+        
+        /* Chart Container Styling - Critical for responsiveness */
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 450px; /* Max width to prevent charts from getting too wide */
+            margin-left: auto;
+            margin-right: auto; /* Center the chart container */
+            height: 320px; /* Base height for smaller screens */
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px; /* Slightly taller on medium screens */
+            }
+        }
+        /* Ensure canvas inside container fills it */
+        .chart-container canvas {
+            display: block;
+            width: 100% !important;
+            height: 100% !important;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container mx-auto p-4 md:p-8 max-w-7xl">
+
+        <!-- Header -->
+        <header class="text-center mb-12 md:mb-16">
+            <h1 class="text-4xl md:text-5xl font-bold text-white mb-2">Disproportionate Risk</h1>
+            <p class="text-lg md:text-xl text-slate-400">An Analysis of Judicial Threats in Idaho</p>
+        </header>
+
+        <!-- Section 1: The Big Picture -->
+        <section class="mb-12 md:mb-20">
+            <div class="bg-slate-800 rounded-lg shadow-2xl p-6 md:p-8">
+                <h2 class="text-2xl md:text-3xl font-bold text-white text-center mb-6">A State Divided: Threat Distribution</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                    <div class="chart-container">
+                        <canvas id="threatDistributionChart"></canvas>
+                    </div>
+                    <div>
+                        <p class="text-lg text-slate-300 mb-6">
+                            Analysis of all reported incidents across Idaho's judicial districts reveals a stark concentration of threats within the 1st Judicial District. It accounted for over two-thirds of all reported incidents, signaling a uniquely challenging security environment.
+                        </p>
+                        <div class="grid grid-cols-2 gap-4 text-center">
+                            <div class="bg-slate-700 p-4 rounded-lg">
+                                <span class="text-4xl font-black text-golden-orange">11</span>
+                                <span class="block text-sm text-slate-400 mt-1">Total Threats in 1st District</span>
+                            </div>
+                            <div class="bg-slate-700 p-4 rounded-lg">
+                                <span class="text-4xl font-black text-purple-blue">5</span>
+                                <span class="block text-sm text-slate-400 mt-1">Total Threats in All Other Districts</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: Overall Threat Likelihood -->
+        <section class="text-center mb-12 md:mb-20 p-6 md:p-8">
+             <h2 class="text-2xl md:text-3xl font-bold text-white text-center mb-4">The Stark Reality of Overall Risk</h2>
+             <p class="text-lg max-w-3xl mx-auto text-slate-400 mb-8">When comparing the 1st District to the average of all other districts, the disparity becomes profoundly clear. This isn't just a slight increase; it's a fundamental difference in the level of risk faced.
+             </p>
+             <div class="bg-slate-800 rounded-lg shadow-2xl p-8 md:p-12">
+                 <p class="text-xl md:text-2xl text-slate-300 mb-2">Judges in the 1st District were</p>
+                 <p class="highlight-stat">13.2x</p>
+                 <p class="text-xl md:text-2xl text-slate-300 mt-2">more likely to experience <span class="highlight-stat-sm">any kind of threat</span> compared to the average of the other six districts.</p>
+             </div>
+        </section>
+
+
+        <!-- Section 3: Threat Category Breakdown -->
+        <section class="mb-12 md:mb-20">
+            <h2 class="text-2xl md:text-3xl font-bold text-white text-center mb-8">A Deeper Dive: Threat Categories</h2>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+                <!-- Card 1: Credible Direct Violent Threats -->
+                <div class="bg-slate-800 rounded-lg shadow-2xl p-6 flex flex-col">
+                    <h3 class="text-xl font-bold text-white mb-1">Credible Direct Violent Threats</h3>
+                    <p class="text-sm text-slate-400 mb-4">(From non-custody individuals)</p>
+                    <p class="text-slate-300 mb-6 flex-grow">These represent the most immediate danger. The 1st District experienced a dramatically higher rate of these high-stakes threats from individuals free to act, compared to the rest of the state.</p>
+                    <div class="text-center mb-6">
+                        <p class="text-lg text-slate-300">1st District judges were</p>
+                        <p class="text-6xl font-black text-vibrant-red-orange my-1">18x</p>
+                        <p class="text-lg text-slate-300">more likely to face this threat than the average of other districts.</p>
+                    </div>
+                    <div class="chart-container h-64">
+                        <canvas id="cdvtChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Card 2: Veiled/Indirect Threats -->
+                <div class="bg-slate-800 rounded-lg shadow-2xl p-6 flex flex-col">
+                    <h3 class="text-xl font-bold text-white mb-4">Veiled and/or Indirect Threats</h3>
+                    <p class="text-slate-300 mb-6 flex-grow">While less direct, these threats create a sustained atmosphere of anxiety and require significant resources to investigate. The 1st District was the epicenter of these incidents.</p>
+                    <div class="text-center mb-6">
+                        <p class="text-lg text-slate-300">1st District judges were</p>
+                        <p class="text-6xl font-black text-bright-orange-yellow my-1">30x</p>
+                        <p class="text-lg text-slate-300">more likely to encounter this threat than the average of other districts.</p>
+                    </div>
+                    <div class="chart-container h-64">
+                        <canvas id="veiledThreatsChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Card 3: Suspicious Incidents -->
+                <div class="bg-slate-800 rounded-lg shadow-2xl p-6 flex flex-col">
+                    <h3 class="text-xl font-bold text-white mb-4">Suspicious Incidents</h3>
+                    <p class="text-slate-300 mb-6 flex-grow">These incidents act as a constant drain on security awareness and resources, probing for weaknesses. The rate of these events was exceptionally high in the 1st District.</p>
+                     <div class="text-center mb-6">
+                        <p class="text-lg text-slate-300">1st District judges were</p>
+                        <p class="text-6xl font-black text-golden-orange my-1">18x</p>
+                        <p class="text-lg text-slate-300">more likely to experience this than the average of other districts.</p>
+                    </div>
+                    <div class="chart-container h-64">
+                        <canvas id="suspiciousIncidentsChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Section 4: Conclusion -->
+        <section class="text-center bg-slate-800 rounded-lg shadow-2xl p-8 md:p-12">
+             <h2 class="text-2xl md:text-3xl font-bold text-white text-center mb-4">Conclusion & Recommendation</h2>
+             <p class="text-lg max-w-3xl mx-auto text-slate-300 mb-6">
+                The data unequivocally shows that the 1st Judicial District faces a threat environment that is not just higher, but of a different magnitude than the rest of the state. This requires a proportional response.
+             </p>
+             <div class="border-t border-slate-700 my-6"></div>
+             <p class="text-lg text-slate-200">
+                Given these findings, we recommend <span class="font-bold text-golden-orange">increased vigilance and awareness</span> for any personnel traveling to or operating within the 1st Judicial District, consistent with its uniquely elevated threat profile.
+             </p>
+        </section>
+
+    </div>
+
+    <script>
+        const chartTooltipCallback = {
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        title: function(tooltipItems) {
+                            const item = tooltipItems[0];
+                            let label = item.chart.data.labels[item.dataIndex];
+                            if (Array.isArray(label)) {
+                              return label.join(' ');
+                            }
+                            return label;
+                        }
+                    }
+                },
+                legend: {
+                    labels: {
+                        color: '#cbd5e1' // slate-300
+                    }
+                }
+            }
+        };
+
+        const chartDefaultOptions = {
+            responsive: true,
+            maintainAspectRatio: false,
+        };
+        
+        const barChartOptions = {
+            ...chartDefaultOptions,
+            ...chartTooltipCallback,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        color: '#94a3b8' // slate-400
+                    },
+                    grid: {
+                        color: '#334155' // slate-700
+                    }
+                },
+                x: {
+                    ticks: {
+                        color: '#cbd5e1' // slate-300
+                    },
+                    grid: {
+                        display: false
+                    }
+                }
+            }
+        };
+
+        // Chart 1: Threat Distribution (Donut)
+        new Chart(document.getElementById('threatDistributionChart'), {
+            type: 'doughnut',
+            data: {
+                labels: ['1st Judicial District', 'All Other Districts'],
+                datasets: [{
+                    label: 'Total Threats',
+                    data: [11, 5],
+                    backgroundColor: ['#ffa600', '#665191'], // golden-orange, purple-blue (improved contrast)
+                    borderColor: '#1e293b', // slate-800
+                    borderWidth: 4,
+                    hoverOffset: 4
+                }]
+            },
+            options: {
+                ...chartDefaultOptions,
+                ...chartTooltipCallback,
+                cutout: '70%',
+            }
+        });
+
+        // Chart 2: CDVT (Bar)
+        new Chart(document.getElementById('cdvtChart'), {
+            type: 'bar',
+            data: {
+                labels: ['1st District', 'Rest of State (Combined)'],
+                datasets: [{
+                    label: 'Incidents',
+                    data: [3, 1],
+                    backgroundColor: ['#f95d6a', '#003f5c'], // vibrant-red-orange, primary-dark-blue
+                    borderColor: ['#f95d6a', '#003f5c'],
+                    borderWidth: 1,
+                    borderRadius: 4
+                }]
+            },
+            options: barChartOptions
+        });
+
+        // Chart 3: Veiled Threats (Bar)
+        new Chart(document.getElementById('veiledThreatsChart'), {
+            type: 'bar',
+            data: {
+                labels: ['1st District', 'Rest of State (Combined)'],
+                datasets: [{
+                    label: 'Incidents',
+                    data: [5, 1],
+                    backgroundColor: ['#ff7c43', '#2f4b7c'], // bright-orange-yellow, secondary-blue
+                    borderColor: ['#ff7c43', '#2f4b7c'],
+                    borderWidth: 1,
+                    borderRadius: 4
+                }]
+            },
+            options: barChartOptions
+        });
+
+        // Chart 4: Suspicious Incidents (Bar)
+        new Chart(document.getElementById('suspiciousIncidentsChart'), {
+            type: 'bar',
+            data: {
+                labels: ['1st District', 'Rest of State (Combined)'],
+                datasets: [{
+                    label: 'Incidents',
+                    data: [3, 1],
+                    backgroundColor: ['#ffa600', '#665191'], // golden-orange, purple-blue
+                    borderColor: ['#ffa600', '#665191'],
+                    borderWidth: 1,
+                    borderRadius: 4
+                }]
+            },
+            options: barChartOptions
+        });
+    </script>
+</body>
+</html>
